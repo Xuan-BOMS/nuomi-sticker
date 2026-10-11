@@ -16,16 +16,13 @@ button:active:enabled{transform:translateY(1px)}
 .brand{display:flex;gap:12px;align-items:center;color:var(--ink);text-decoration:none;font-size:19px;font-weight:700;letter-spacing:2px}
 .brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--green);color:var(--paper);font-family:"STKaiti","KaiTi",serif;font-size:26px;transform:rotate(-9deg)}
 .brand small{display:block;font-size:8px;letter-spacing:2px;margin-top:4px;font-weight:400}
-.local-note{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.local-note{font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:0}
+.local-note>span:first-child{display:flex;align-items:center;gap:8px}
+.local-note i{flex-shrink:0}
+.touch-note{font-size:11px;color:var(--green)}
 .local-note i,.status-dot{width:6px;height:6px;background:#7b9667;border-radius:50%;display:inline-block}
 main{max-width:1400px;margin:auto;padding:45px 48px 0}
-.intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
 .eyebrow{font-size:11px;letter-spacing:3px;color:var(--green);margin:0 0 12px}
-.intro h1{font-family:"STKaiti","KaiTi","Noto Serif CJK SC",serif;font-weight:700;font-size:clamp(36px,4vw,53px);letter-spacing:1px;margin:0;line-height:1.2}
-.intro h1 span{color:#879956}
-.intro-copy{color:var(--muted);font-size:13px;margin:15px 0 0}
-.intro-tag{font-family:"STKaiti","KaiTi",serif;font-size:18px;line-height:1.6;border:1px solid #a8b38d;padding:13px 21px;transform:rotate(7deg);position:relative;margin-right:8px}
-.intro-tag span{font-family:serif;font-size:26px;position:absolute;right:-13px;bottom:-14px;background:var(--paper)}
 .workspace{display:grid;grid-template-columns:minmax(0,1fr) 286px;gap:24px;align-items:start}
 .editor{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--white)}
 .editor-bar{height:55px;display:flex;justify-content:space-between;align-items:center;padding:0 20px;font-size:11px;color:var(--muted);gap:12px}
@@ -103,13 +100,10 @@ footer{margin:0 28px}
 .brand{font-size:16px}
 .brand-mark{width:36px;height:36px;font-size:23px}
 .brand small{font-size:7px}
-.local-note{font-size:9px;max-width:100px;line-height:1.5}
+.local-note{font-size:9px;max-width:145px;line-height:1.5;text-align:right}
+.touch-note{font-size:9px}
 main{padding:27px 16px 0}
-.intro{margin-bottom:25px;padding:0 4px}
-.intro h1{font-size:39px}
 .eyebrow{font-size:10px;letter-spacing:2px}
-.intro-copy{font-size:11px;max-width:220px;line-height:1.7;margin-top:11px}
-.intro-tag{font-size:13px;padding:9px 12px;margin-right:5px}
 .workspace{grid-template-columns:1fr;gap:14px}
 .stage{height:390px;padding:14px}
 .editor-bar{height:48px;padding:0 13px}

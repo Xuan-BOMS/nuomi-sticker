@@ -41,7 +41,7 @@ const assetsReady = Promise.allSettled(['default', 'character'].map(async (id) =
   const image = new Image();
   image.src = `assets/${id}.png`;
   await image.decode();
-  registerAsset(id, image, id === 'default' ? '粉发搭子' : '糯米天师', true);
+  registerAsset(id, image, id === 'default' ? '下江小春' : '糯米天师', true);
 })).then((results) => {
   if (results.some((result) => result.status === 'rejected')) notify('部分贴纸加载失败，请刷新页面重试。');
   sync();
