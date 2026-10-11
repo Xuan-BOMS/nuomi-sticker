@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f6ef">
-  <meta name="description" content="拖入图片，贴上糯米天师，轻松旋转、缩放与遮盖。免费在本地合成，保存原图尺寸 PNG。">
+  <meta name="description" content="拖入图片，选择内置贴纸或上传自己的贴纸，轻松旋转、缩放与遮盖。在本地合成，保存原图尺寸 PNG。">
   <title>糯米贴贴 · 图片贴纸工作台</title>
-  <link rel="icon" href="assets/character.png">
+  <link rel="icon" href="assets/default.png">
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
@@ -16,13 +16,13 @@
     <span class="local-note"><i></i> 图片只在你的设备里处理</span>
   </header>
   <main>
-    <section class="intro"><div><p class="eyebrow">给图片，贴一点可爱。</p><h1>这里不许看<span>。</span></h1><p class="intro-copy">拖入一张图片，让糯米天师帮你挡一挡。</p></div><span class="intro-tag">随手一贴<br>即刻保存 <span>↘</span></span></section>
+    <section class="intro"><div><p class="eyebrow">给图片，贴一点可爱。</p><h1>这里不许看<span>。</span></h1><p class="intro-copy">拖入一张图片，选个搭子帮你挡一挡。</p></div><span class="intro-tag">随手一贴<br>即刻保存 <span>↘</span></span></section>
     <div class="workspace">
       <section class="editor" aria-label="图片编辑区域">
         <div class="editor-bar"><span><i class="status-dot"></i><span id="image-info">等待一张图片</span></span><div class="history"><button id="undo" title="撤销 (Ctrl+Z)" aria-label="撤销" disabled>↶</button><button id="redo" title="重做 (Ctrl+Shift+Z)" aria-label="重做" disabled>↷</button><button id="replace" class="text-button" hidden>更换图片</button></div></div>
         <div class="stage" id="stage">
           <div class="empty" id="empty">
-            <span class="empty-stamp"><img src="assets/character.png" alt="举着禁止标志的糯米天师" draggable="false"></span>
+            <span class="empty-stamp"><img src="assets/default.png" alt="举着禁止标志的粉发人物" draggable="false"></span>
             <h2>把图片拖到这里</h2><p>或点一下，选一张想贴的图片</p>
             <button class="primary" id="upload">＋ 选择图片</button>
             <span class="format-note">JPG / PNG / WebP 等浏览器支持的图片</span>
@@ -33,7 +33,7 @@
         <div class="editor-foot"><span id="gesture-tip">原图尺寸导出 · 透明贴纸</span><span class="foot-label">MADE TO STICK</span></div>
       </section>
       <aside class="tools" aria-label="贴纸工具">
-        <section class="sticker-section"><div class="section-title"><h2>你的挡图搭子</h2><span>01 / 贴纸</span></div><button class="sticker-card" id="add" disabled><img src="assets/character.png" alt="添加糯米天师贴纸" draggable="false"><span><strong>糯米天师</strong><small>点击，再贴一张</small></span><b>＋</b></button></section>
+        <section class="sticker-section"><div class="section-title"><h2>你的挡图搭子</h2><span>01 / 贴纸</span></div><p class="library-hint">点击选项，替换选中的贴纸</p><div id="asset-list" class="asset-list" role="group" aria-label="选择贴纸"><button class="asset-option" data-asset="default" aria-pressed="true"><img src="assets/default.png" alt="粉发人物贴纸" draggable="false"><strong>粉发搭子</strong><small>默认选项</small></button><button class="asset-option" data-asset="character" aria-pressed="false"><img src="assets/character.png" alt="糯米天师贴纸" draggable="false"><strong>糯米天师</strong><small>第二选项</small></button></div><button class="library-upload" id="upload-sticker">↑ 上传自己的贴纸</button><button class="library-add" id="add" disabled>＋ 再贴一张</button></section>
         <section class="adjust-section"><div class="section-title"><h2>调整一下</h2><span>02 / 位置</span></div><p id="selection-note" class="selection-note">先选一张图片，就可以开始贴贴。</p><fieldset id="controls" disabled>
           <label class="range-label" for="size">贴纸大小<output id="size-value">40%</output></label><input id="size" type="range" min="2" max="200" step="0.5" value="40">
           <label class="range-label" for="rotation">旋转角度<output id="rotation-value">0°</output></label><input id="rotation" type="range" min="-180" max="180" step="1" value="0">
@@ -46,6 +46,7 @@
   </main>
   <footer><span>糯米贴贴 <em>一点可爱，一点隐私。</em></span><span>无需登录 / 无需上传服务器</span></footer>
   <input type="file" id="file" accept="image/*" hidden>
+  <input type="file" id="sticker-file" accept="image/*" hidden>
   <div id="toast" role="status" aria-live="polite"></div>
   <dialog id="result"><div class="dialog-head"><div><p class="eyebrow">贴好啦！</p><h2>把可爱带走。</h2></div><button id="close-result" aria-label="关闭预览">×</button></div><div class="result-preview"><img id="result-image" alt="合成后的图片，手机可长按保存"></div><p id="result-info"></p><div class="result-actions"><a id="download" class="primary" download="nuomi-sticker.png">下载 PNG ↓</a><button id="share" hidden>分享 / 存储到手机</button></div><p class="save-hint">手机若没有自动下载，可长按上方图片保存，或使用分享按钮。</p></dialog>
 </body>

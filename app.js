@@ -3,8 +3,9 @@
 const $ = (id) => document.getElementById(id);
 const canvas = $('canvas');
 const context = canvas.getContext('2d');
-const sticker = new Image();
-const stickerSurface = document.createElement('canvas');
+const assets = new Map();
+let chosenAsset = 'default';
+let nextAssetId = 1;
 const pointers = new Map();
 let base = null;
 let layers = [];
@@ -19,22 +20,33 @@ let resultUrl = null;
 let resultFile = null;
 let toastTimer;
 
-sticker.src = 'assets/character.png';
-sticker.onload = () => {
-  stickerSurface.width = sticker.naturalWidth;
-  stickerSurface.height = sticker.naturalHeight;
-  const target = stickerSurface.getContext('2d');
-  target.drawImage(sticker, 0, 0);
-  const pixels = target.getImageData(0, 0, stickerSurface.width, stickerSurface.height);
-  for (let i = 3; i < pixels.data.length; i += 4) {
-    if (pixels.data[i] >= 240) pixels.data[i] = 255;
-    else if (pixels.data[i] <= 8) pixels.data[i] = 0;
+function registerAsset(id, image, name, clean = false) {
+  const surface = document.createElement('canvas');
+  surface.width = image.naturalWidth || image.width;
+  surface.height = image.naturalHeight || image.height;
+  const target = surface.getContext('2d');
+  target.drawImage(image, 0, 0);
+  if (clean) {
+    const pixels = target.getImageData(0, 0, surface.width, surface.height);
+    for (let i = 3; i < pixels.data.length; i += 4) {
+      if (pixels.data[i] >= 240) pixels.data[i] = 255;
+      else if (pixels.data[i] <= 8) pixels.data[i] = 0;
+    }
+    target.putImageData(pixels, 0, 0);
   }
-  target.putImageData(pixels, 0, 0);
-  $('add').disabled = !base;
+  assets.set(id, { image: surface, width: surface.width, height: surface.height, name });
+}
+
+const assetsReady = Promise.allSettled(['default', 'character'].map(async (id) => {
+  const image = new Image();
+  image.src = `assets/${id}.png`;
+  await image.decode();
+  registerAsset(id, image, id === 'default' ? '粉发搭子' : '糯米天师', true);
+})).then((results) => {
+  if (results.some((result) => result.status === 'rejected')) notify('部分贴纸加载失败，请刷新页面重试。');
+  sync();
   draw();
-};
-sticker.onerror = () => notify('贴纸加载失败，请刷新页面重试。');
+});
 
 function notify(message) {
   $('toast').textContent = message;
@@ -47,7 +59,7 @@ function active() { return layers.find((layer) => layer.id === selected); }
 function touchDevice() { return matchMedia('(pointer: coarse)').matches || (navigator.maxTouchPoints > 0 && matchMedia('(max-width: 720px)').matches); }
 function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
 function angle(value) { return ((value + 180) % 360 + 360) % 360 - 180; }
-function dimensions(layer) { return { width: layer.width, height: layer.width * sticker.naturalHeight / sticker.naturalWidth }; }
+function dimensions(layer) { const asset = assets.get(layer.assetId); return { width: layer.width, height: layer.width * asset.height / asset.width }; }
 function snapshot() { return JSON.stringify({ layers, selected }); }
 
 function commit() {
@@ -71,9 +83,14 @@ function restore(offset) {
 
 function sync() {
   const layer = active();
+  if (layer) chosenAsset = layer.assetId;
   $('controls').disabled = !layer;
   $('export').disabled = !base;
-  $('add').disabled = !base || !sticker.naturalWidth;
+  $('add').disabled = !base || !assets.has(chosenAsset);
+  for (const option of $('asset-list').querySelectorAll('[data-asset]')) {
+    option.setAttribute('aria-pressed', String(option.dataset.asset === chosenAsset));
+    option.disabled = !assets.has(option.dataset.asset);
+  }
   $('undo').disabled = historyIndex <= 0;
   $('redo').disabled = historyIndex >= history.length - 1;
   $('selection-note').textContent = !base ? '先选一张图片，就可以开始贴贴。' : layer ? `已选中贴纸 · 共 ${layers.length} 张` : '点击贴纸选中，或再添加一张。';
@@ -92,7 +109,7 @@ function drawLayer(target, layer) {
   target.translate(layer.x, layer.y);
   target.rotate(layer.rotation * Math.PI / 180);
   target.scale(layer.flip ? -1 : 1, 1);
-  target.drawImage(stickerSurface, -width / 2, -height / 2, width, height);
+  target.drawImage(assets.get(layer.assetId).image, -width / 2, -height / 2, width, height);
   target.restore();
 }
 
@@ -156,20 +173,19 @@ function fit() {
 }
 
 function addLayer(source) {
-  if (!base || !sticker.naturalWidth) return;
-  const width = Math.min(base.width * .4, base.height * .55 * sticker.naturalWidth / sticker.naturalHeight);
-  const layer = source ? { ...source, id: nextId++, x: clamp(source.x + 20 / zoom, 0, base.width), y: clamp(source.y + 20 / zoom, 0, base.height) } : { id: nextId++, x: base.width / 2, y: base.height / 2, width, rotation: 0, flip: false };
+  const asset = assets.get(chosenAsset);
+  if (!base || !asset) return;
+  const width = Math.min(base.width * .4, base.height * .55 * asset.width / asset.height);
+  const layer = source ? { ...source, id: nextId++, x: clamp(source.x + 20 / zoom, 0, base.width), y: clamp(source.y + 20 / zoom, 0, base.height) } : { id: nextId++, assetId: chosenAsset, x: base.width / 2, y: base.height / 2, width, rotation: 0, flip: false };
   layers.push(layer);
   selected = layer.id;
   commit();
   draw();
 }
 
-async function loadFile(file) {
-  if (!file) return;
-  if (!file.type.startsWith('image/') && !/\.(png|jpe?g|webp|gif|bmp|avif|heic|heif)$/i.test(file.name)) return notify('请选择一张图片文件。');
-  if (file.size > 80 * 1024 * 1024) return notify('图片超过 80 MB，请先缩小文件再试。');
-  const version = ++importVersion;
+async function readImage(file) {
+  if (!file.type.startsWith('image/') && !/\.(png|jpe?g|webp|gif|bmp|avif|heic|heif)$/i.test(file.name)) throw new Error('请选择一张图片文件。');
+  if (file.size > 80 * 1024 * 1024) throw new Error('图片超过 80 MB，请先缩小文件再试。');
   let image;
   try {
     image = await createImageBitmap(file);
@@ -179,12 +195,20 @@ async function loadFile(file) {
     try { image.src = url; await image.decode(); } catch { image = null; }
     URL.revokeObjectURL(url);
   }
-  if (version !== importVersion) { image?.close?.(); return; }
-  if (!image) return notify('这张图片无法读取。HEIC 图片请先转换为 JPG 或 PNG。');
+  if (!image) throw new Error('这张图片无法读取。HEIC 图片请先转换为 JPG 或 PNG。');
   if (image.width * image.height > 64000000 || Math.max(image.width, image.height) > 16384) {
     image.close?.();
-    return notify('图片尺寸过大，请先调整到 6400 万像素以内、单边不超过 16384 像素。');
+    throw new Error('图片尺寸过大，请先调整到 6400 万像素以内、单边不超过 16384 像素。');
   }
+  return image;
+}
+
+async function loadFile(file) {
+  if (!file) return;
+  const version = ++importVersion;
+  let image;
+  try { image = await readImage(file); } catch (error) { if (version === importVersion) notify(error.message); return; }
+  if (version !== importVersion) { image.close?.(); return; }
   base?.close?.();
   base = image;
   layers = [];
@@ -199,7 +223,7 @@ async function loadFile(file) {
   $('image-info').textContent = `${base.width} × ${base.height} · ${file.name}`;
   $('image-info').title = file.name;
   $('gesture-tip').textContent = touchDevice() ? '单指拖动 · 双指缩放 / 旋转' : '拖动贴纸 · 圆点旋转 · 右下角缩放';
-  await sticker.decode().catch(() => {});
+  await assetsReady;
   if (version !== importVersion) return;
   fit();
   commit();
@@ -323,6 +347,51 @@ function modify(operation) {
   sync();
   draw();
 }
+
+function chooseAsset(id) {
+  if (gesture || !assets.has(id)) return;
+  chosenAsset = id;
+  if (active()) modify((layer) => { layer.assetId = id; });
+  else sync();
+}
+
+$('asset-list').addEventListener('click', (event) => {
+  const option = event.target.closest('[data-asset]');
+  if (option) chooseAsset(option.dataset.asset);
+});
+$('upload-sticker').onclick = () => $('sticker-file').click();
+$('sticker-file').onchange = async () => {
+  const file = $('sticker-file').files[0];
+  $('sticker-file').value = '';
+  if (!file) return;
+  $('upload-sticker').disabled = true;
+  let image;
+  try {
+    image = await readImage(file);
+    const id = `custom-${nextAssetId++}`;
+    registerAsset(id, image, file.name);
+    const option = document.createElement('button');
+    option.className = 'asset-option';
+    option.dataset.asset = id;
+    option.setAttribute('aria-pressed', 'false');
+    const preview = document.createElement('img');
+    preview.src = URL.createObjectURL(file);
+    preview.alt = file.name;
+    preview.draggable = false;
+    const label = document.createElement('strong');
+    label.textContent = file.name;
+    label.title = file.name;
+    const caption = document.createElement('small');
+    caption.textContent = '自定义贴纸';
+    option.append(preview, label, caption);
+    $('asset-list').append(option);
+    chooseAsset(id);
+    if (base && !active()) addLayer();
+    notify('自定义贴纸已选好。上传素材的透明区域会保留。');
+  } catch (error) { notify(error.message); }
+  finally { image?.close?.(); $('upload-sticker').disabled = false; }
+};
+
 $('flip').onclick = () => modify((layer) => { layer.flip = !layer.flip; });
 $('center').onclick = () => modify((layer) => { layer.x = base.width / 2; layer.y = base.height / 2; });
 $('delete').onclick = () => modify(() => { layers = layers.filter((layer) => layer.id !== selected); selected = layers.at(-1)?.id ?? null; });
