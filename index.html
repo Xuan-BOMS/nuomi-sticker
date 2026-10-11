@@ -32,7 +32,12 @@
         <div class="editor-foot"><span id="gesture-tip">原图尺寸导出 · 透明贴纸</span><span class="foot-label">MADE TO STICK</span></div>
       </section>
       <aside class="tools" aria-label="贴纸工具">
-        <section class="sticker-section"><div class="section-title"><h2>你的挡图搭子</h2><span>01 / 贴纸</span></div><p class="library-hint">点击选项，替换选中的贴纸</p><div id="asset-list" class="asset-list" role="group" aria-label="选择贴纸"><button class="asset-option" data-asset="default" aria-pressed="true"><img src="assets/default.png" alt="下江小春贴纸" draggable="false"><strong>下江小春</strong><small>默认选项</small></button><button class="asset-option" data-asset="character" aria-pressed="false"><img src="assets/character.png" alt="糯米天师贴纸" draggable="false"><strong>糯米天师</strong><small>第二选项</small></button></div><button class="library-upload" id="upload-sticker">↑ 上传自己的贴纸</button><button class="library-add" id="add" disabled>＋ 再贴一张</button></section>
+        <section class="sticker-section"><div class="section-title"><h2>你的挡图搭子</h2><span>01 / 贴纸</span></div><p class="library-hint">点击选项，替换选中的贴纸</p><div id="asset-list" class="asset-list" role="group" aria-label="选择贴纸">
+          <button class="asset-option" data-asset="default" aria-pressed="true"><img src="assets/default.png" alt="下江小春贴纸" draggable="false"><strong>下江小春</strong><small>一号 · 默认选项</small></button>
+          <button class="asset-option" data-asset="koharu-swimsuit" aria-pressed="false"><img src="assets/koharu-swimsuit.png" alt="下江小春泳装贴纸" draggable="false"><strong>下江小春 · 泳装</strong><small>二号</small></button>
+          <button class="asset-option" data-asset="koharu-dress" aria-pressed="false"><img src="assets/koharu-dress.png" alt="下江小春礼服贴纸" draggable="false"><strong>下江小春 · 礼服</strong><small>三号</small></button>
+          <button class="asset-option" data-asset="character" aria-pressed="false"><img src="assets/character.png" alt="糯米天师贴纸" draggable="false"><strong>糯米天师</strong><small>四号</small></button>
+        </div><button class="library-upload" id="upload-sticker">↑ 上传自己的贴纸</button><button class="library-add" id="add" disabled>＋ 再贴一张</button></section>
         <section class="adjust-section"><div class="section-title"><h2>调整一下</h2><span>02 / 位置</span></div><p id="selection-note" class="selection-note">先选一张图片，就可以开始贴贴。</p><fieldset id="controls" disabled>
           <label class="range-label" for="size">贴纸大小<output id="size-value">40%</output></label><input id="size" type="range" min="2" max="200" step="0.5" value="40">
           <label class="range-label" for="rotation">旋转角度<output id="rotation-value">0°</output></label><input id="rotation" type="range" min="-180" max="180" step="1" value="0">

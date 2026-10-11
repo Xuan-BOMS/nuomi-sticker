@@ -37,11 +37,17 @@ function registerAsset(id, image, name, clean = false) {
   assets.set(id, { image: surface, width: surface.width, height: surface.height, name });
 }
 
-const assetsReady = Promise.allSettled(['default', 'character'].map(async (id) => {
+const presets = [
+  ['default', '下江小春'],
+  ['koharu-swimsuit', '下江小春 · 泳装'],
+  ['koharu-dress', '下江小春 · 礼服'],
+  ['character', '糯米天师']
+];
+const assetsReady = Promise.allSettled(presets.map(async ([id, name]) => {
   const image = new Image();
   image.src = `assets/${id}.png`;
   await image.decode();
-  registerAsset(id, image, id === 'default' ? '下江小春' : '糯米天师', true);
+  registerAsset(id, image, name, id === 'character');
 })).then((results) => {
   if (results.some((result) => result.status === 'rejected')) notify('部分贴纸加载失败，请刷新页面重试。');
   sync();

@@ -140,7 +140,7 @@ dialog{padding:20px}
 }
 
 .library-hint{font-size:10px;color:var(--muted);margin:-5px 0 12px}
-.asset-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:270px;overflow:auto;padding:2px}
+.asset-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:330px;overflow:auto;padding:2px}
 .asset-option{border:1px solid var(--line);border-radius:9px;background:#f4f5ed;padding:9px 5px 10px;color:var(--ink);min-width:0;position:relative}
 .asset-option[aria-pressed=true]{border-color:var(--green);background:#eaf0dc;box-shadow:inset 0 0 0 1px var(--green)}
 .asset-option[aria-pressed=true]:after{content:"✓";position:absolute;right:6px;top:4px;color:var(--green);font-size:13px}
@@ -156,7 +156,7 @@ dialog{padding:20px}
 
 @media(max-width:720px){.tools{display:block}
 .library-hint{font-size:9px;margin-bottom:10px}
-.asset-list{grid-template-columns:repeat(3,minmax(0,1fr));max-height:255px}
+.asset-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:310px}
 .asset-option img{height:78px}
 .library-upload,.library-add{display:inline-block;width:calc(50% - 5px);vertical-align:middle;margin-top:12px}
 .library-upload{margin-right:6px;padding:7px 4px}
