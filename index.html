@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f6ef">
+  <meta name="theme-color" content="#f7f6ef" id="theme-color">
   <meta name="description" content="拖入图片，选择内置贴纸或上传自己的贴纸，轻松旋转、缩放与遮盖。在本地合成，保存原图尺寸 PNG。">
   <title>糯米贴贴 · 图片贴纸工作台</title>
   <link rel="icon" href="assets/default.png">
+  <script src="theme.js"></script>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
 <body>
   <header class="header">
     <a class="brand" href="./" aria-label="糯米贴贴首页"><span class="brand-mark">糯</span><span>糯米贴贴<small>NUOMI STICKER STUDIO</small></span></a>
-    <span class="local-note"><span><i></i> 图片只在你的设备里处理</span><span class="touch-note">手机可双指操作：缩放 / 旋转</span></span>
+    <div class="header-actions"><span class="local-note"><span><i></i> 图片只在你的设备里处理</span><span class="touch-note">手机可双指操作：缩放 / 旋转</span></span><button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换到深色模式" title="切换到深色模式" aria-pressed="false"><svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 13.4A8.7 8.7 0 0 1 10.6 3.3 8.7 8.7 0 1 0 20.7 13.4Z"/></svg><svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/></svg><span class="theme-label">深色</span></button></div>
   </header>
   <main>
     <div class="workspace">
@@ -33,11 +34,11 @@
       </section>
       <aside class="tools" aria-label="贴纸工具">
         <section class="sticker-section"><div class="section-title"><h2>你的挡图搭子</h2><span>01 / 贴纸</span></div><p class="library-hint">点击选项，替换选中的贴纸</p><div id="asset-list" class="asset-list" role="group" aria-label="选择贴纸">
-          <button class="asset-option" data-asset="default" aria-pressed="true"><img src="assets/default.png" alt="下江小春贴纸" draggable="false"><strong>下江小春</strong><small>一号 · 默认选项</small></button>
+          <button class="asset-option" data-asset="default" aria-pressed="true"><img src="assets/default.png" alt="下江小春贴纸" draggable="false"><strong>下江小春</strong><small>一号</small></button>
           <button class="asset-option" data-asset="koharu-swimsuit" aria-pressed="false"><img src="assets/koharu-swimsuit.png" alt="下江小春泳装贴纸" draggable="false"><strong>下江小春 · 泳装</strong><small>二号</small></button>
           <button class="asset-option" data-asset="koharu-dress" aria-pressed="false"><img src="assets/koharu-dress.png" alt="下江小春礼服贴纸" draggable="false"><strong>下江小春 · 礼服</strong><small>三号</small></button>
           <button class="asset-option" data-asset="character" aria-pressed="false"><img src="assets/character.png" alt="糯米天师贴纸" draggable="false"><strong>糯米天师</strong><small>四号</small></button>
-        </div><button class="library-upload" id="upload-sticker">↑ 上传自己的贴纸</button><button class="library-add" id="add" disabled>＋ 再贴一张</button></section>
+        </div><div class="library-actions"><button class="library-upload" id="upload-sticker">↑ 上传自己的贴纸</button><button class="library-add" id="add" disabled>＋ 再贴一张</button></div></section>
         <section class="adjust-section"><div class="section-title"><h2>调整一下</h2><span>02 / 位置</span></div><p id="selection-note" class="selection-note">先选一张图片，就可以开始贴贴。</p><fieldset id="controls" disabled>
           <label class="range-label" for="size">贴纸大小<output id="size-value">40%</output></label><input id="size" type="range" min="2" max="200" step="0.5" value="40">
           <label class="range-label" for="rotation">旋转角度<output id="rotation-value">0°</output></label><input id="rotation" type="range" min="-180" max="180" step="1" value="0">
