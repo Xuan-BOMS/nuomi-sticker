@@ -12,7 +12,7 @@
     const theme = preference || (system.matches ? 'dark' : 'light');
     const dark = theme === 'dark';
     document.documentElement.dataset.theme = theme;
-    document.getElementById('theme-color').content = dark ? '#19211d' : '#f7f6ef';
+    document.getElementById('theme-color').content = dark ? '#29252f' : '#35323a';
     const button = document.getElementById('theme-toggle');
     if (button) {
       button.title = dark ? '切换到浅色模式' : '切换到深色模式';

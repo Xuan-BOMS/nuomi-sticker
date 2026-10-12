@@ -135,11 +135,13 @@ function draw() {
   if (!layer) return;
   const { width, height } = dimensions(layer);
   const unit = 1 / zoom;
+  const palette = getComputedStyle(canvas);
+  const handleColor = palette.getPropertyValue('--handle').trim();
   context.save();
   context.translate(layer.x, layer.y);
   context.rotate(layer.rotation * Math.PI / 180);
-  context.strokeStyle = '#496d3f';
-  context.fillStyle = '#fffef9';
+  context.strokeStyle = handleColor;
+  context.fillStyle = palette.getPropertyValue('--handle-fill').trim();
   context.lineWidth = 1.5 * unit;
   context.setLineDash([5 * unit, 4 * unit]);
   context.strokeRect(-width / 2, -height / 2, width, height);
@@ -157,7 +159,7 @@ function draw() {
   context.font = `${12 * unit}px sans-serif`;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
-  context.fillStyle = '#496d3f';
+  context.fillStyle = handleColor;
   context.fillText('↻', 0, -height / 2 - 28 * unit);
   context.fillText('↗', width / 2, height / 2);
   context.restore();
